@@ -1,0 +1,56 @@
+1. 下载xmlrpc
+
+   http://sourceforge.net/projects/xmlrpc-c/postdownload?source=dlp
+   
+   xmlrpc-c-1.25.26.tgz
+   
+2. 安装xmlrpc
+   将xmlrpc-c-1.25.26.tgz放在/home/hfjiang/moses-platform/extra-packages
+   解压，进行安装
+   $ ./configure
+   $ make
+   $ su
+   $ make install
+
+	 屏幕会打印一堆信息，最后两行如下：
+   /home/hfjiang/moses-platform/extra-packages/xmlrpc-c-1.25.26/install-sh -c -m 755 xmlrpc-c-config /usr/local/bin/xmlrpc-c-config
+   /bin/sh /home/hfjiang/moses-platform/extra-packages/xmlrpc-c-1.25.26/mkinstalldirs /usr/local/man/man1
+   
+   从中可以看出，"xmlrpc-c-config /usr/local/bin/xmlrpc-c-config"
+  
+3. 编译moses的server版
+
+   将mosesdecoder目录拷贝一份为server-moses。
+   编译时和之前的moses一样，只不过需要设置一下xmlrpc的config路径。这个路径在上面一步中可知，在/usr/local/bin/xmlrpc-c-config
+   但是，以前尝试成功的经验是只需要给"/usr/local/"，然后会自动加"bin"子目录，然后寻找xmlrpc-c-config
+   所以，执行过程如下：
+   
+   cd /home/hfjiang/moses-platform/server-moses
+   ./bjam --clean
+   ./bjam -j4 --with-irstlm=/home/hfjiang/moses-platform/irstlm-5.80.03 --with-giza=/home/hfjiang/moses-platform/giza-pp --with-xmlrpc-c=/usr/local
+   
+    最后，在/home/hfjiang/moses-platform/server-moses/bin中生成了./mosesserver.
+    但是，执行时发生错误：./mosesserver: error while loading shared libraries: libxmlrpc_server_abyss++.so.7: cannot open shared object file: No such file or directory
+    在网上找了个解决方案：
+    http://lists.opennebula.org/pipermail/users-opennebula.org/2012-February/018054.html
+    解决办法是：在执行mosesserver之前，执行：
+    export LD_LIBRARY_PATH=/usr/local/lib
+    
+    搞定。使用方法如moses的官网所述：
+    Running make should then build an executable server/mosesserver. This can be launched using the same command-line arguments as moses, with two additional arguments to specify the listening port and log-file (--server-port and --server-log). These default to 8080 and /dev/null respectively
+    
+4. 编译带dlib路径的moses的server版    
+   cd /home/hfjiang/moses-platform/server-moses
+   ./bjam --clean
+   ./bjam -j4 --with-irstlm=/home/hfjiang/moses-platform/irstlm-5.80.03 --with-giza=/home/hfjiang/moses-platform/giza-pp --with-xmlrpc-c=/usr/local --with-dlib=/home/hfjiang/moses-platform/extra-packages/dlib-18.5/dlib-18.5/
+   
+   成功！
+   将/home/hfjiang/moses-platform/server-moses/bin下面新生成的mosesserver
+   拷贝到/home/hfjiang/moses-platform/server-moses/hfjiang-test-server
+   启动Moses server：
+   cd hfjiang-test-server
+   perl run-server.perl
+   
+   测试python版本的xmlrpc调度optimize模块
+   cd /home/hfjiang/test-python-xmlrpc
+   python client_multimodel.py
