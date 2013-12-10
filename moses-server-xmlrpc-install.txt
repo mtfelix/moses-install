@@ -17,6 +17,10 @@
    /bin/sh /home/hfjiang/moses-platform/extra-packages/xmlrpc-c-1.25.26/mkinstalldirs /usr/local/man/man1
    
    从中可以看出，"xmlrpc-c-config /usr/local/bin/xmlrpc-c-config"
+   
+   当然了，CentOS也可以直接
+   su
+   yum install xmlrpc
   
 3. 编译moses的server版
 
