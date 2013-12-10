@@ -18,9 +18,11 @@
    
    从中可以看出，"xmlrpc-c-config /usr/local/bin/xmlrpc-c-config"
    
-   当然了，CentOS也可以直接
-   su
-   yum install xmlrpc
+   #当然了，CentOS也可以直接
+   #su
+   #yum install xmlrpc
+   #但是不能保证是最新版本的。不建议。
+   
   
 3. 编译moses的server版
 
@@ -40,10 +42,15 @@
     解决办法是：在执行mosesserver之前，执行：
     export LD_LIBRARY_PATH=/usr/local/lib
     
-    搞定。使用方法如moses的官网所述：
+    搞定。
+    
+    使用方法.
+    如moses的官网所述：
     Running make should then build an executable server/mosesserver. This can be launched using the same command-line arguments as moses, with two additional arguments to specify the listening port and log-file (--server-port and --server-log). These default to 8080 and /dev/null respectively
     
-4. 编译带dlib路径的moses的server版    
+4. 编译带dlib路径的moses的server版 
+   主要是想测试xmlrpc中调用moses的optimize功能，也就是实时地增加一些phrase pair到原始的phrase table中，
+   
    cd /home/hfjiang/moses-platform/server-moses
    ./bjam --clean
    ./bjam -j4 --with-irstlm=/home/hfjiang/moses-platform/irstlm-5.80.03 --with-giza=/home/hfjiang/moses-platform/giza-pp --with-xmlrpc-c=/usr/local --with-dlib=/home/hfjiang/moses-platform/extra-packages/dlib-18.5/dlib-18.5/
